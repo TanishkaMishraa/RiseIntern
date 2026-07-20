@@ -1,0 +1,14 @@
+{
+  "nav.home": "Home",
+  "nav.about": "About",
+  "nav.internships": "Internships",
+  "nav.login": "Login",
+  "nav.register": "Register",
+  "nav.logout": "Logout",
+  "hero.title": "Your Gateway to Smart Internships",
+  "hero.subtitle": "Connecting Students with Opportunities under PM Internship Scheme",
+  "hero.cta": "Launch RiseIntern",
+  "common.loading": "Loading...",
+  "common.save": "Save",
+  "common.cancel": "Cancel"
+}

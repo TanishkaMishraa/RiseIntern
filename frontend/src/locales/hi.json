@@ -1,0 +1,14 @@
+{
+  "nav.home": "होम",
+  "nav.about": "हमारे बारे में",
+  "nav.internships": "इंटर्नशिप",
+  "nav.login": "लॉगिन",
+  "nav.register": "रजिस्टर करें",
+  "nav.logout": "लॉगआउट",
+  "hero.title": "स्मार्ट इंटर्नशिप का आपका प्रवेश द्वार",
+  "hero.subtitle": "पीएम इंटर्नशिप योजना के तहत छात्रों को अवसरों से जोड़ना",
+  "hero.cta": "RiseIntern शुरू करें",
+  "common.loading": "लोड हो रहा है...",
+  "common.save": "सहेजें",
+  "common.cancel": "रद्द करें"
+}
