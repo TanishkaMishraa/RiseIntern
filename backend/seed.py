@@ -2,6 +2,7 @@ from datetime import datetime, timedelta, timezone
 
 from app.core.database import Base, SessionLocal, engine
 from app.core.security import hash_password
+from app.models.application import Application
 from app.models.internship import Internship
 from app.models.user import User
 
@@ -23,6 +24,12 @@ LISTINGS = [
     ("HR Operations Intern", "Human Resources", ["Communication", "Project Management"], 9000, "Remote"),
 ]
 
+NOW = datetime.now(timezone.utc)
+
+
+def dl(days: int) -> datetime:
+    return NOW + timedelta(days=days)
+
 
 def seed() -> None:
     Base.metadata.create_all(bind=engine)
@@ -32,9 +39,15 @@ def seed() -> None:
             print("Database already seeded, skipping.")
             return
 
-        recruiter = User(
+        recruiter1 = User(
             name="Priya Sharma",
             email="recruiter@riseintern.com",
+            hashed_password=hash_password("password123"),
+            role="recruiter",
+        )
+        recruiter2 = User(
+            name="Karan Verma",
+            email="recruiter2@riseintern.com",
             hashed_password=hash_password("password123"),
             role="recruiter",
         )
@@ -44,6 +57,8 @@ def seed() -> None:
             hashed_password=hash_password("password123"),
             role="student",
             skills=["JavaScript", "React", "Communication"],
+            education="B.Tech Computer Science, Class of 2026",
+            location="Bengaluru",
         )
         admin = User(
             name="Site Admin",
@@ -51,26 +66,47 @@ def seed() -> None:
             hashed_password=hash_password("password123"),
             role="admin",
         )
-        db.add_all([recruiter, student, admin])
+        db.add_all([recruiter1, recruiter2, student, admin])
         db.flush()
 
-        now = datetime.now(timezone.utc)
+        recruiters = [recruiter1, recruiter2]
+        internships = []
         for i, (title, domain, skills, stipend, location) in enumerate(LISTINGS):
+            internship = Internship(
+                title=title,
+                domain=domain,
+                description=f"Join our team as a {title.lower()} and work on real-world projects.",
+                skills_required=skills,
+                stipend=stipend,
+                location=location,
+                deadline=dl(14 + i),
+                recruiter_id=recruiters[i % len(recruiters)].id,
+            )
+            db.add(internship)
+            internships.append(internship)
+        db.flush()
+
+        recruiter1_listings = [i for i in internships if i.recruiter_id == recruiter1.id]
+        demo_applications = [
+            (recruiter1_listings[0], "applied", "I've shipped two React side projects and would love to bring that to a real team."),
+            (recruiter1_listings[1], "shortlisted", "Comfortable with Python and SQL from coursework and a summer project."),
+            (recruiter1_listings[2], "interview", "Built a full-stack app end to end — excited about this role."),
+        ]
+        for internship, application_status, cover_note in demo_applications:
             db.add(
-                Internship(
-                    title=title,
-                    domain=domain,
-                    description=f"Join our team as a {title.lower()} and work on real-world projects.",
-                    skills_required=skills,
-                    stipend=stipend,
-                    location=location,
-                    deadline=now + timedelta(days=14 + i),
-                    recruiter_id=recruiter.id,
+                Application(
+                    internship_id=internship.id,
+                    student_id=student.id,
+                    status=application_status,
+                    cover_note=cover_note,
                 )
             )
 
         db.commit()
-        print(f"Seeded {len(LISTINGS)} internships and 3 demo users (password123).")
+        print(
+            f"Seeded {len(LISTINGS)} internships across 2 recruiters, "
+            f"{len(demo_applications)} demo applications, and 4 demo users (password123)."
+        )
     finally:
         db.close()
 

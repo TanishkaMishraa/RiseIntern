@@ -24,3 +24,10 @@ export function deleteInternship(id, token) {
 export function getRecommendations(token) {
   return apiClient.get("/internships/recommendations", { token });
 }
+
+export const recruiterInternshipApi = {
+  mine: (token) => apiClient.get("/internships/mine", { token }),
+  create: (payload, token) => apiClient.post("/internships", payload, { token }),
+  update: (id, payload, token) => apiClient.put(`/internships/${id}`, payload, { token }),
+  remove: (id, token) => apiClient.delete(`/internships/${id}`, { token }),
+};

@@ -42,7 +42,7 @@ def test_apply_status_change_and_notification_flow(client, db_session):
     recruiter_headers = auth_headers(client, "priya@example.com")
     applicants = client.get(f"/api/internships/{internship.id}/applications", headers=recruiter_headers)
     assert len(applicants.json()) == 1
-    assert applicants.json()[0]["name"] == "Aarav"
+    assert applicants.json()[0]["student"]["name"] == "Aarav"
 
     status_response = client.patch(
         f"/api/applications/{application_id}", json={"status": "shortlisted"}, headers=recruiter_headers

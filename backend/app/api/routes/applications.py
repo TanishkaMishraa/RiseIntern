@@ -6,11 +6,26 @@ from app.core.database import get_db
 from app.models.application import Application
 from app.models.internship import Internship
 from app.models.user import User
-from app.schemas.application import ApplicantSummary, ApplicationStatusUpdate, MyApplicationRead
+from app.schemas.application import (
+    ApplicantOut,
+    ApplicationCreate,
+    ApplicationStatusUpdate,
+    MyApplicationRead,
+    StudentSummary,
+)
 from app.services.email_service import send_application_status_email
 from app.services.notification_service import create_notification
 
 router = APIRouter(tags=["applications"])
+
+
+def _to_applicant_out(application: Application) -> ApplicantOut:
+    return ApplicantOut(
+        id=application.id,
+        status=application.status,
+        cover_note=application.cover_note,
+        student=StudentSummary.model_validate(application.student),
+    )
 
 
 @router.post(
@@ -20,6 +35,7 @@ router = APIRouter(tags=["applications"])
 )
 def apply_to_internship(
     internship_id: int,
+    payload: ApplicationCreate,
     current_user: User = Depends(require_role("student")),
     db: Session = Depends(get_db),
 ):
@@ -35,7 +51,9 @@ def apply_to_internship(
     if existing:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Already applied")
 
-    application = Application(internship_id=internship_id, student_id=current_user.id)
+    application = Application(
+        internship_id=internship_id, student_id=current_user.id, cover_note=payload.cover_note
+    )
     db.add(application)
     db.commit()
     db.refresh(application)
@@ -67,7 +85,7 @@ def list_my_applications(
     ]
 
 
-@router.get("/internships/{internship_id}/applications", response_model=list[ApplicantSummary])
+@router.get("/internships/{internship_id}/applications", response_model=list[ApplicantOut])
 def list_applicants(
     internship_id: int,
     current_user: User = Depends(require_role("recruiter", "admin")),
@@ -80,18 +98,10 @@ def list_applicants(
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not your listing")
 
     applications = db.query(Application).filter(Application.internship_id == internship_id).all()
-    return [
-        ApplicantSummary(
-            id=a.id,
-            name=a.student.name,
-            internshipTitle=internship.title,
-            status=a.status,
-        )
-        for a in applications
-    ]
+    return [_to_applicant_out(a) for a in applications]
 
 
-@router.patch("/applications/{application_id}", response_model=ApplicantSummary)
+@router.patch("/applications/{application_id}", response_model=ApplicantOut)
 def update_application_status(
     application_id: int,
     payload: ApplicationStatusUpdate,
@@ -117,9 +127,4 @@ def update_application_status(
         application.student.email, application.student.name, application.internship.title, payload.status
     )
 
-    return ApplicantSummary(
-        id=application.id,
-        name=application.student.name,
-        internshipTitle=application.internship.title,
-        status=application.status,
-    )
+    return _to_applicant_out(application)

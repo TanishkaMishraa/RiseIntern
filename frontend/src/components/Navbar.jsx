@@ -21,6 +21,14 @@ export default function Navbar() {
 
         {isAuthenticated ? (
           <>
+            {user?.role === "recruiter" && (
+              <>
+                <Link to="/recruiter">Dashboard</Link>
+                <Link to="/recruiter/listings">My Listings</Link>
+              </>
+            )}
+            {user?.role === "student" && <Link to="/recommendations">For You</Link>}
+            {user?.role === "admin" && <Link to="/admin">Admin</Link>}
             <NotificationBell />
             <LanguageSwitcher />
             <span>👋 {user?.name}</span>

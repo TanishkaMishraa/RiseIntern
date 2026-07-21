@@ -4,7 +4,7 @@ from pydantic import BaseModel, ConfigDict
 
 
 class ApplicationCreate(BaseModel):
-    pass
+    cover_note: str | None = None
 
 
 class ApplicationStatusUpdate(BaseModel):
@@ -29,8 +29,19 @@ class MyApplicationRead(BaseModel):
     createdAt: datetime
 
 
-class ApplicantSummary(BaseModel):
+class StudentSummary(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     name: str
-    internshipTitle: str
+    email: str
+    skills: list[str] = []
+    education: str | None = None
+    location: str | None = None
+
+
+class ApplicantOut(BaseModel):
+    id: int
     status: str
+    cover_note: str | None = None
+    student: StudentSummary

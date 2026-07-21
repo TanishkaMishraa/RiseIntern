@@ -59,7 +59,7 @@ export default function App() {
                   <Route path="/recruiter" element={<RecruiterDashboard />} />
                   <Route path="/recruiter/post" element={<PostInternship />} />
                   <Route path="/recruiter/listings" element={<MyListings />} />
-                  <Route path="/recruiter/applicants" element={<Applicants />} />
+                  <Route path="/recruiter/listings/:id/applicants" element={<Applicants />} />
                   <Route path="/recruiter/analytics" element={<Analytics />} />
                 </Route>
 

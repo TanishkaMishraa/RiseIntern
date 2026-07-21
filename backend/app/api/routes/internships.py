@@ -56,6 +56,20 @@ def list_internships(
     return [_to_read_model(i, bookmarked_ids) for i in internships]
 
 
+@router.get("/mine", response_model=list[InternshipRead])
+def list_my_internships(
+    current_user: User = Depends(require_role("recruiter")),
+    db: Session = Depends(get_db),
+):
+    internships = (
+        db.query(Internship)
+        .filter(Internship.recruiter_id == current_user.id)
+        .order_by(Internship.created_at.desc())
+        .all()
+    )
+    return [_to_read_model(i, set()) for i in internships]
+
+
 @router.get("/{internship_id}", response_model=InternshipRead)
 def get_internship(
     internship_id: int,

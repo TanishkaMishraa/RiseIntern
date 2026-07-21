@@ -25,6 +25,7 @@ class InternshipUpdate(BaseModel):
     stipend: int | None = None
     location: str | None = None
     deadline: datetime | None = None
+    is_closed: bool | None = None
 
 
 class InternshipRead(InternshipBase):

@@ -16,8 +16,12 @@ class UserRead(UserBase):
 
     id: int
     skills: list[str] = []
+    education: str | None = None
+    location: str | None = None
 
 
 class UserUpdate(BaseModel):
     name: str | None = None
     skills: list[str] | None = None
+    education: str | None = None
+    location: str | None = None

@@ -19,6 +19,10 @@ def update_me(
         current_user.name = payload.name
     if payload.skills is not None:
         current_user.skills = payload.skills
+    if payload.education is not None:
+        current_user.education = payload.education
+    if payload.location is not None:
+        current_user.location = payload.location
 
     db.commit()
     db.refresh(current_user)

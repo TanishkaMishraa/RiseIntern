@@ -16,6 +16,8 @@ class User(Base, TimestampMixin):
     hashed_password: Mapped[str] = mapped_column(String(255))
     role: Mapped[str] = mapped_column(String(20), default="student")
     skills: Mapped[list[str]] = mapped_column(JSON, default=list)
+    education: Mapped[str | None] = mapped_column(String(200), default=None)
+    location: Mapped[str | None] = mapped_column(String(120), default=None)
 
     internships: Mapped[list["Internship"]] = relationship(back_populates="recruiter")
     applications: Mapped[list["Application"]] = relationship(back_populates="student")

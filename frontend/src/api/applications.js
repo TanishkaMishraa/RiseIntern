@@ -15,3 +15,8 @@ export function listApplicantsForInternship(internshipId, token) {
 export function updateApplicationStatus(applicationId, status, token) {
   return apiClient.patch(`/applications/${applicationId}`, { status }, { token });
 }
+
+export const applicationApi = {
+  forInternship: (internshipId, token) => listApplicantsForInternship(internshipId, token),
+  updateStatus: (applicationId, status, token) => updateApplicationStatus(applicationId, status, token),
+};

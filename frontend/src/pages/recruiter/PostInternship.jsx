@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createInternship } from "../../api/internships";
+import { recruiterInternshipApi } from "../../api/internships";
 import { useAuth } from "../../context/AuthContext";
 import { useToast } from "../../hooks/useToast";
 import { DOMAINS } from "../../utils/constants";
@@ -27,7 +27,14 @@ export default function PostInternship() {
   async function handleSubmit(e) {
     e.preventDefault();
     try {
-      await createInternship(form, token);
+      await recruiterInternshipApi.create(
+        {
+          ...form,
+          stipend: form.stipend === "" ? 0 : Number(form.stipend),
+          location: form.location.trim() || "Remote",
+        },
+        token
+      );
       toast.success("Internship posted");
       navigate("/recruiter/listings");
     } catch (err) {
