@@ -19,6 +19,7 @@ class Internship(Base, TimestampMixin):
     location: Mapped[str] = mapped_column(String(120), default="Remote")
     deadline: Mapped[datetime] = mapped_column(DateTime)
     is_closed: Mapped[bool] = mapped_column(default=False)
+    is_removed: Mapped[bool] = mapped_column(default=False)
 
     recruiter_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     recruiter: Mapped["User"] = relationship(back_populates="internships")

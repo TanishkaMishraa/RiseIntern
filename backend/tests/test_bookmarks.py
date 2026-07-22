@@ -39,6 +39,19 @@ def test_bookmark_add_list_remove(client, db_session):
     assert list_after.json() == []
 
 
+def test_bookmark_duplicate_returns_400(client, db_session):
+    recruiter = make_user(db_session, name="Priya", email="priya@example.com", role="recruiter")
+    make_user(db_session, name="Aarav", email="aarav@example.com", role="student")
+    internship = _create_internship(db_session, recruiter.id)
+    headers = auth_headers(client, "aarav@example.com")
+
+    first = client.post("/api/bookmarks", json={"internshipId": internship.id}, headers=headers)
+    assert first.status_code == 201
+
+    duplicate = client.post("/api/bookmarks", json={"internshipId": internship.id}, headers=headers)
+    assert duplicate.status_code == 400
+
+
 def test_bookmark_requires_student_role(client, db_session):
     recruiter = make_user(db_session, name="Priya", email="priya@example.com", role="recruiter")
     internship = _create_internship(db_session, recruiter.id)

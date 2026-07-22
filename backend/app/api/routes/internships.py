@@ -21,7 +21,7 @@ def _to_read_model(internship: Internship, bookmarked_ids: set[int]) -> Internsh
 
 @router.get("", response_model=list[InternshipRead])
 def list_internships(
-    search: str | None = None,
+    q: str | None = None,
     domain: str | None = None,
     location: str | None = None,
     minStipend: int | None = None,
@@ -29,7 +29,7 @@ def list_internships(
     db: Session = Depends(get_db),
     current_user: User | None = Depends(get_optional_user),
 ):
-    query = db.query(Internship)
+    query = db.query(Internship).filter(Internship.is_removed.is_(False))
 
     if domain:
         query = query.filter(Internship.domain == domain)
@@ -39,8 +39,8 @@ def list_internships(
         query = query.filter(Internship.stipend >= minStipend)
     if recruiterId:
         query = query.filter(Internship.recruiter_id == recruiterId)
-    if search:
-        like = f"%{search}%"
+    if q:
+        like = f"%{q}%"
         query = query.filter(
             Internship.title.ilike(like) | Internship.domain.ilike(like) | Internship.description.ilike(like)
         )

@@ -18,6 +18,7 @@ class UserRead(UserBase):
     skills: list[str] = []
     education: str | None = None
     location: str | None = None
+    is_active: bool = True
 
 
 class UserUpdate(BaseModel):

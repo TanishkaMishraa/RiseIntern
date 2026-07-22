@@ -43,8 +43,12 @@ export function AuthProvider({ children }) {
     localStorage.removeItem(TOKEN_STORAGE_KEY);
   }
 
+  function updateUser(patch) {
+    setUser((current) => ({ ...current, ...patch }));
+  }
+
   const value = useMemo(
-    () => ({ user, token, isAuthenticated: Boolean(user), isLoading, login, logout }),
+    () => ({ user, token, isAuthenticated: Boolean(user), isLoading, login, logout, updateUser }),
     [user, token, isLoading]
   );
 

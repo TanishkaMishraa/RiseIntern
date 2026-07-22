@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { recruiterInternshipApi } from "../../api/internships";
+import SkillTagInput from "../../components/SkillTagInput";
 import { useAuth } from "../../context/AuthContext";
 import { useToast } from "../../hooks/useToast";
 import { DOMAINS } from "../../utils/constants";
@@ -9,6 +10,7 @@ const INITIAL_FORM = {
   title: "",
   domain: DOMAINS[0],
   description: "",
+  skills_required: [],
   stipend: "",
   location: "",
   deadline: "",
@@ -53,8 +55,8 @@ export default function PostInternship() {
           required
         />
         <select value={form.domain} onChange={(e) => update("domain", e.target.value)}>
-          {DOMAINS.map((d) => (
-            <option key={d} value={d}>{d}</option>
+          {DOMAINS.map((domain) => (
+            <option key={domain} value={domain}>{domain}</option>
           ))}
         </select>
         <textarea
@@ -64,6 +66,14 @@ export default function PostInternship() {
           rows={4}
           required
         />
+        <label>
+          Required skills
+          <SkillTagInput
+            value={form.skills_required}
+            onChange={(skills) => update("skills_required", skills)}
+            placeholder="Add required skills"
+          />
+        </label>
         <input
           placeholder="Stipend"
           type="number"

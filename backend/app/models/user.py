@@ -18,6 +18,7 @@ class User(Base, TimestampMixin):
     skills: Mapped[list[str]] = mapped_column(JSON, default=list)
     education: Mapped[str | None] = mapped_column(String(200), default=None)
     location: Mapped[str | None] = mapped_column(String(120), default=None)
+    is_active: Mapped[bool] = mapped_column(default=True)
 
     internships: Mapped[list["Internship"]] = relationship(back_populates="recruiter")
     applications: Mapped[list["Application"]] = relationship(back_populates="student")

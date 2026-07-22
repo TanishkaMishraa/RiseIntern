@@ -8,6 +8,8 @@ class NotificationRead(BaseModel):
 
     id: int
     message: str
+    type: str
+    link: str | None = None
     read: bool
     created_at: datetime
 

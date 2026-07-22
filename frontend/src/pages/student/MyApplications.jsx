@@ -23,28 +23,37 @@ export default function MyApplications() {
   }
 
   return (
-    <div style={{ padding: "20px 50px" }}>
-      {applications.map((app) => (
-        <div key={app.id} style={{ marginBottom: 20 }}>
-          <h3>{app.internshipTitle}</h3>
-          <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
-            {APPLICATION_STATUSES.map((status) => (
-              <span
-                key={status}
-                style={{
-                  padding: "4px 12px",
-                  borderRadius: 20,
-                  fontSize: "0.8rem",
-                  fontWeight: app.status === status ? 700 : 400,
-                  background: app.status === status ? "#e0f7fa" : "transparent",
-                }}
-              >
-                {APPLICATION_STATUS_LABELS[status]}
-              </span>
-            ))}
-          </div>
-        </div>
-      ))}
-    </div>
+    <section style={{ padding: "40px 50px" }}>
+      <h2>My Applications</h2>
+      <div style={{ display: "flex", gap: 16, marginTop: 20, overflowX: "auto" }}>
+        {APPLICATION_STATUSES.map((status) => {
+          const inColumn = applications.filter((app) => app.status === status);
+          return (
+            <div
+              key={status}
+              style={{ background: "#f4f7fb", borderRadius: 12, padding: 12, minWidth: 220, flex: 1 }}
+            >
+              <h4 style={{ marginBottom: 10 }}>
+                {APPLICATION_STATUS_LABELS[status]} ({inColumn.length})
+              </h4>
+              {inColumn.map((app) => (
+                <div
+                  key={app.id}
+                  style={{
+                    background: "#fff",
+                    borderRadius: 10,
+                    padding: 12,
+                    marginBottom: 10,
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                  }}
+                >
+                  <strong>{app.internshipTitle}</strong>
+                </div>
+              ))}
+            </div>
+          );
+        })}
+      </div>
+    </section>
   );
 }

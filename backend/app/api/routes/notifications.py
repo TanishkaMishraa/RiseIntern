@@ -12,6 +12,8 @@ router = APIRouter(prefix="/notifications", tags=["notifications"])
 
 @router.get("", response_model=list[NotificationRead])
 def list_notifications(
+    limit: int = 20,
+    offset: int = 0,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
@@ -19,6 +21,8 @@ def list_notifications(
         db.query(Notification)
         .filter(Notification.user_id == current_user.id)
         .order_by(Notification.created_at.desc())
+        .offset(offset)
+        .limit(min(limit, 100))
         .all()
     )
 

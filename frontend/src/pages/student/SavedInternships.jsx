@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
-import { listBookmarks } from "../../api/bookmarks";
+import { bookmarkApi } from "../../api/bookmarks";
 import InternshipCard from "../../components/InternshipCard";
 import EmptyState from "../../components/EmptyState";
 import Skeleton from "../../components/Skeleton";
@@ -11,7 +11,7 @@ export default function SavedInternships() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    listBookmarks(token)
+    bookmarkApi.list(token)
       .then(setSaved)
       .finally(() => setIsLoading(false));
   }, [token]);

@@ -25,6 +25,8 @@ def get_current_user(
     user = db.query(User).filter(User.email == email).first()
     if not user:
         raise unauthorized
+    if not user.is_active:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="This account has been deactivated")
 
     return user
 
@@ -49,3 +51,13 @@ def require_role(*roles: str):
         return user
 
     return dependency
+
+
+class PaginationParams:
+    def __init__(self, page: int = 1, pageSize: int = 10):
+        self.page = max(1, page)
+        self.page_size = max(1, min(pageSize, 100))
+
+    @property
+    def offset(self) -> int:
+        return (self.page - 1) * self.page_size

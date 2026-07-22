@@ -14,7 +14,11 @@ export default function Login() {
     e.preventDefault();
     try {
       const user = await login({ email, password });
-      navigate(user.role === "student" ? "/internships" : `/${user.role}`);
+      if (user.role === "student") {
+        navigate(user.skills?.length > 0 ? "/internships" : "/onboarding");
+      } else {
+        navigate(`/${user.role}`);
+      }
     } catch (err) {
       toast.error("Invalid email or password");
     }

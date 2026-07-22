@@ -1,3 +1,5 @@
+import logging
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
@@ -16,6 +18,7 @@ from app.schemas.application import (
 from app.services.email_service import send_application_status_email
 from app.services.notification_service import create_notification
 
+logger = logging.getLogger(__name__)
 router = APIRouter(tags=["applications"])
 
 
@@ -118,13 +121,18 @@ def update_application_status(
     db.commit()
     db.refresh(application)
 
-    create_notification(
-        db,
-        user_id=application.student_id,
-        message=f"Your application for '{application.internship.title}' is now {payload.status}.",
-    )
-    send_application_status_email(
-        application.student.email, application.student.name, application.internship.title, payload.status
-    )
+    try:
+        create_notification(
+            db,
+            user_id=application.student_id,
+            message=f"Your application for '{application.internship.title}' is now {payload.status}.",
+            type="application_status",
+            link="/applications",
+        )
+        send_application_status_email(
+            application.student.email, application.student.name, application.internship.title, payload.status
+        )
+    except Exception:
+        logger.exception("Failed to notify student %s of application status change", application.student_id)
 
     return _to_applicant_out(application)

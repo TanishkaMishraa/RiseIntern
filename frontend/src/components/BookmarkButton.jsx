@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { addBookmark, removeBookmark } from "../api/bookmarks";
+import { bookmarkApi } from "../api/bookmarks";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../hooks/useToast";
 
@@ -9,14 +9,18 @@ export default function BookmarkButton({ internshipId, initiallyBookmarked = fal
   const [bookmarked, setBookmarked] = useState(initiallyBookmarked);
 
   async function toggle() {
+    const next = !bookmarked;
+    setBookmarked(next);
     try {
-      if (bookmarked) {
-        await removeBookmark(internshipId, token);
+      if (next) {
+        await bookmarkApi.add(internshipId, token);
+        toast.success("Saved");
       } else {
-        await addBookmark(internshipId, token);
+        await bookmarkApi.remove(internshipId, token);
+        toast.success("Removed from saved");
       }
-      setBookmarked((prev) => !prev);
     } catch (err) {
+      setBookmarked(!next);
       toast.error("Could not update bookmark");
     }
   }

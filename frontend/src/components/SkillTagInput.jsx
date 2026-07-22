@@ -1,56 +1,78 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { SKILLS } from "../utils/constants";
 
-export default function SkillTagInput({ value = [], onChange }) {
+function normalizeSkills(value) {
+  if (Array.isArray(value)) return value.filter(Boolean);
+  if (typeof value !== "string") return [];
+  return value.split(",").map((skill) => skill.trim()).filter(Boolean);
+}
+
+export default function SkillTagInput({ value = [], onChange, placeholder = "Add a skill" }) {
+  const skills = useMemo(() => normalizeSkills(value), [value]);
   const [input, setInput] = useState("");
+
+  useEffect(() => {
+    if (typeof value === "string") onChange?.(skills.join(", "));
+  }, []);
 
   const suggestions = SKILLS.filter(
     (skill) =>
-      skill.toLowerCase().includes(input.toLowerCase()) && !value.includes(skill)
-  ).slice(0, 5);
+      input.trim() &&
+      skill.toLowerCase().includes(input.toLowerCase()) &&
+      !skills.some((selected) => selected.toLowerCase() === skill.toLowerCase())
+  ).slice(0, 6);
 
-  function addSkill(skill) {
-    if (!skill || value.includes(skill)) return;
-    onChange([...value, skill]);
+  function emit(nextSkills) {
+    onChange?.(Array.isArray(value) ? nextSkills : nextSkills.join(", "));
+  }
+
+  function addSkill(rawSkill) {
+    const skill = rawSkill.trim();
+    if (!skill || skills.some((selected) => selected.toLowerCase() === skill.toLowerCase())) return;
+    emit([...skills, skill]);
     setInput("");
   }
 
   function removeSkill(skill) {
-    onChange(value.filter((s) => s !== skill));
+    emit(skills.filter((selected) => selected !== skill));
+  }
+
+  function handleKeyDown(e) {
+    if (e.key === "Enter" || e.key === ",") {
+      e.preventDefault();
+      addSkill(input.replace(",", ""));
+    }
+    if (e.key === "Backspace" && input === "" && skills.length > 0) {
+      removeSkill(skills[skills.length - 1]);
+    }
   }
 
   return (
-    <div>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 8 }}>
-        {value.map((skill) => (
-          <span
-            key={skill}
-            onClick={() => removeSkill(skill)}
-            style={{
-              background: "#e0f7fa",
-              borderRadius: 20,
-              padding: "4px 12px",
-              cursor: "pointer",
-            }}
-          >
-            {skill} ✕
+    <div className="skill-input">
+      <div className="skill-input__box">
+        {skills.map((skill) => (
+          <span className="skill-chip" key={skill}>
+            {skill}
+            <button type="button" aria-label={`Remove ${skill}`} onClick={() => removeSkill(skill)}>
+              x
+            </button>
           </span>
         ))}
+        <input
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder={skills.length ? "" : placeholder}
+        />
       </div>
-      <input
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        onKeyDown={(e) => e.key === "Enter" && addSkill(input.trim())}
-        placeholder="Add a skill..."
-      />
-      {input && suggestions.length > 0 && (
-        <ul>
+      {suggestions.length > 0 && (
+        <div className="skill-input__suggestions">
           {suggestions.map((skill) => (
-            <li key={skill} onClick={() => addSkill(skill)} style={{ cursor: "pointer" }}>
+            <button type="button" key={skill} onClick={() => addSkill(skill)}>
               {skill}
-            </li>
+            </button>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );

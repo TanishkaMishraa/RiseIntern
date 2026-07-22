@@ -34,8 +34,13 @@ class InternshipRead(InternshipBase):
     id: int
     recruiter_id: int
     is_closed: bool
+    is_removed: bool = False
     created_at: datetime
     bookmarked: bool = False
+
+
+class AdminInternshipRead(InternshipRead):
+    recruiterName: str
 
 
 class RecommendationRead(BaseModel):

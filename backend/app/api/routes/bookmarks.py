@@ -40,7 +40,7 @@ def add_bookmark(
         .first()
     )
     if existing:
-        return {"detail": "Already bookmarked"}
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Already bookmarked")
 
     db.add(Bookmark(student_id=current_user.id, internship_id=payload.internshipId))
     db.commit()

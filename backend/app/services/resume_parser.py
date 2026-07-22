@@ -3,9 +3,11 @@ from io import BytesIO
 from pypdf import PdfReader
 
 KNOWN_SKILLS = [
-    "JavaScript", "Python", "React", "SQL", "Figma", "SEO", "Excel",
-    "Communication", "Java", "C++", "Node.js", "HTML", "CSS", "Git",
-    "Machine Learning", "Data Analysis", "Project Management",
+    "JavaScript", "TypeScript", "React", "Node.js", "Python", "FastAPI", "Django",
+    "SQL", "PostgreSQL", "MongoDB", "HTML", "CSS", "Tailwind CSS", "Git", "Docker",
+    "AWS", "Data Analysis", "Machine Learning", "Excel", "Power BI", "Figma",
+    "UI Design", "UX Research", "SEO", "Content Writing", "Digital Marketing",
+    "Finance", "Accounting", "Communication", "Project Management", "Java", "C++",
 ]
 
 

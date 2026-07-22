@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, UploadFile, status
 from sqlalchemy.orm import Session
 
 from app.api.deps import require_role
+from app.core.config import get_settings
 from app.core.database import get_db
 from app.core.storage import delete_file, save_file
 from app.models.resume import Resume
@@ -10,6 +11,7 @@ from app.schemas.resume import ResumeRead
 from app.services.resume_parser import extract_skills, extract_text
 
 router = APIRouter(prefix="/resumes", tags=["resumes"])
+settings = get_settings()
 
 
 @router.post("", response_model=ResumeRead, status_code=status.HTTP_201_CREATED)
@@ -18,30 +20,41 @@ async def upload_resume(
     current_user: User = Depends(require_role("student")),
     db: Session = Depends(get_db),
 ):
-    contents = await resume.read()
+    filename = resume.filename or ""
+    if not filename.lower().endswith(".pdf"):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Only PDF resumes are accepted"
+        )
 
-    text = extract_text(contents, resume.filename or "resume.txt")
+    contents = await resume.read()
+    max_bytes = settings.max_resume_size_mb * 1024 * 1024
+    if len(contents) > max_bytes:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Resume must be under {settings.max_resume_size_mb}MB",
+        )
+    if len(contents) == 0:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Resume file is empty")
+
+    text = extract_text(contents, filename)
     skills = extract_skills(text)
-    stored_path = save_file(resume.filename or "resume.txt", contents)
+    stored_path = save_file(filename, contents)
 
     existing = db.query(Resume).filter(Resume.student_id == current_user.id).first()
     if existing:
         delete_file(existing.file_path)
-        existing.filename = resume.filename or "resume.txt"
+        existing.filename = filename
         existing.file_path = stored_path
         existing.extracted_skills = skills
         record = existing
     else:
         record = Resume(
             student_id=current_user.id,
-            filename=resume.filename or "resume.txt",
+            filename=filename,
             file_path=stored_path,
             extracted_skills=skills,
         )
         db.add(record)
-
-    merged_skills = sorted(set(current_user.skills or []) | set(skills))
-    current_user.skills = merged_skills
 
     db.commit()
     db.refresh(record)

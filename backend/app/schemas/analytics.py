@@ -6,8 +6,20 @@ class ListingApplicationCount(BaseModel):
     applications: int
 
 
+class FunnelStage(BaseModel):
+    status: str
+    count: int
+
+
+class PopularSkill(BaseModel):
+    skill: str
+    count: int
+
+
 class RecruiterAnalytics(BaseModel):
     applicationsPerListing: list[ListingApplicationCount]
+    funnel: list[FunnelStage]
+    popularSkills: list[PopularSkill]
 
 
 class SignupPoint(BaseModel):

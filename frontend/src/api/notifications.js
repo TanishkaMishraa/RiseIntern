@@ -4,6 +4,10 @@ export function listNotifications(token) {
   return apiClient.get("/notifications", { token });
 }
 
+export function getUnreadCount(token) {
+  return apiClient.get("/notifications/unread-count", { token });
+}
+
 export function markNotificationRead(id, token) {
   return apiClient.patch(`/notifications/${id}`, { read: true }, { token });
 }

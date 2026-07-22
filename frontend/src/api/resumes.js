@@ -8,8 +8,11 @@ export function uploadResume(file, token) {
     method: "POST",
     headers: token ? { Authorization: `Bearer ${token}` } : undefined,
     body: formData,
-  }).then((res) => {
-    if (!res.ok) throw new Error("Resume upload failed");
+  }).then(async (res) => {
+    if (!res.ok) {
+      const body = await res.json().catch(() => null);
+      throw new Error(body?.detail || "Resume upload failed");
+    }
     return res.json();
   });
 }

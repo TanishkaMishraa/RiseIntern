@@ -27,7 +27,14 @@ export default function Navbar() {
                 <Link to="/recruiter/listings">My Listings</Link>
               </>
             )}
-            {user?.role === "student" && <Link to="/recommendations">For You</Link>}
+            {user?.role === "student" && (
+              <>
+                <Link to="/recommendations">For You</Link>
+                <Link to="/saved">Saved</Link>
+                <Link to="/applications">My Applications</Link>
+                <Link to="/profile">Profile</Link>
+              </>
+            )}
             {user?.role === "admin" && <Link to="/admin">Admin</Link>}
             <NotificationBell />
             <LanguageSwitcher />

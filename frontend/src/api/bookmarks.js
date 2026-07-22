@@ -11,3 +11,9 @@ export function addBookmark(internshipId, token) {
 export function removeBookmark(internshipId, token) {
   return apiClient.delete(`/bookmarks/${internshipId}`, { token });
 }
+
+export const bookmarkApi = {
+  list: (token) => listBookmarks(token),
+  add: (internshipId, token) => addBookmark(internshipId, token),
+  remove: (internshipId, token) => removeBookmark(internshipId, token),
+};
