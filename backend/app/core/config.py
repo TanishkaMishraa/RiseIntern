@@ -16,6 +16,9 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = 60 * 24
 
     cors_origins: list[str] = ["http://localhost:5173"]
+    frontend_url: str = "http://localhost:5173"
+
+    sentry_dsn: str = ""
 
     storage_dir: str = "./storage/resumes"
     max_resume_size_mb: int = 5

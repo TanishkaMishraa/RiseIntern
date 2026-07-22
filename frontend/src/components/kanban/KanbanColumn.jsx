@@ -1,9 +1,10 @@
 import { useState } from "react";
 import ApplicantCard from "./ApplicantCard";
-import { APPLICATION_STATUS_LABELS } from "../../utils/constants";
+import { useI18n } from "../../context/I18nContext";
 
-export default function KanbanColumn({ status, applicants, onDragStart, onDrop }) {
+export default function KanbanColumn({ status, applicants, onDragStart, onDrop, onMove }) {
   const [isOver, setIsOver] = useState(false);
+  const { t } = useI18n();
 
   return (
     <div
@@ -27,10 +28,10 @@ export default function KanbanColumn({ status, applicants, onDragStart, onDrop }
       }}
     >
       <h4 style={{ marginBottom: 10 }}>
-        {APPLICATION_STATUS_LABELS[status]} ({applicants.length})
+        {t(`status.${status}`)} ({applicants.length})
       </h4>
       {applicants.map((applicant) => (
-        <ApplicantCard key={applicant.id} applicant={applicant} onDragStart={onDragStart} />
+        <ApplicantCard key={applicant.id} applicant={applicant} onDragStart={onDragStart} onMove={onMove} />
       ))}
     </div>
   );

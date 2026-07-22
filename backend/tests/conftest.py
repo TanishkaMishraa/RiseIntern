@@ -8,6 +8,7 @@ from app.core.database import Base, get_db
 from app.core.security import hash_password
 from app.main import app
 from app.models.user import User
+from app.tasks import emails as email_tasks
 
 engine = create_engine(
     "sqlite:///:memory:",
@@ -22,6 +23,15 @@ def _reset_db():
     Base.metadata.create_all(bind=engine)
     yield
     Base.metadata.drop_all(bind=engine)
+
+
+@pytest.fixture(autouse=True)
+def _reset_email_queue():
+    # The email queue is process-global (a module-level deque), so it leaks
+    # across tests unless cleared on both sides of each test.
+    email_tasks._queue.clear()
+    yield
+    email_tasks._queue.clear()
 
 
 @pytest.fixture

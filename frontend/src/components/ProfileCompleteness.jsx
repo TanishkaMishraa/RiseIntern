@@ -1,10 +1,13 @@
+import { useI18n } from "../context/I18nContext";
+
 const FIELDS = [
-  { key: "skills", label: "skills", filled: (user) => (user?.skills?.length ?? 0) > 0 },
-  { key: "education", label: "education", filled: (user) => Boolean(user?.education) },
-  { key: "location", label: "location", filled: (user) => Boolean(user?.location) },
+  { key: "skills", labelKey: "profileCompleteness.field.skills", filled: (user) => (user?.skills?.length ?? 0) > 0 },
+  { key: "education", labelKey: "profileCompleteness.field.education", filled: (user) => Boolean(user?.education) },
+  { key: "location", labelKey: "profileCompleteness.field.location", filled: (user) => Boolean(user?.location) },
 ];
 
 export default function ProfileCompleteness({ user }) {
+  const { t } = useI18n();
   const missing = FIELDS.filter((field) => !field.filled(user));
   const percent = Math.round(((FIELDS.length - missing.length) / FIELDS.length) * 100);
 
@@ -21,9 +24,9 @@ export default function ProfileCompleteness({ user }) {
         />
       </div>
       <p style={{ fontSize: "0.85rem", marginTop: 6 }}>
-        Profile {percent}% complete
+        {t("profileCompleteness.percentComplete", { percent })}
         {missing.length > 0 &&
-          ` — add your ${missing.map((f) => f.label).join(", ")} to unlock better matches`}
+          t("profileCompleteness.addFieldsSuffix", { fields: missing.map((f) => t(f.labelKey)).join(", ") })}
       </p>
     </div>
   );

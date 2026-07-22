@@ -2,14 +2,15 @@ import { useEffect, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import { useAuth } from "../../context/AuthContext";
 import { getRecruiterAnalytics } from "../../api/analytics";
-import { APPLICATION_STATUS_LABELS } from "../../utils/constants";
 import Skeleton from "../../components/Skeleton";
 import EmptyState from "../../components/EmptyState";
+import { useI18n } from "../../context/I18nContext";
 
 const FUNNEL_COLORS = ["#0073e6", "#00a86b", "#c9a818", "#ff5722", "#8a94a3"];
 
 export default function Analytics() {
   const { token } = useAuth();
+  const { t } = useI18n();
   const [data, setData] = useState(null);
 
   useEffect(() => {
@@ -20,16 +21,20 @@ export default function Analytics() {
 
   const funnelData = data.funnel.map((stage) => ({
     ...stage,
-    label: APPLICATION_STATUS_LABELS[stage.status] ?? stage.status,
+    label: t(`status.${stage.status}`),
   }));
 
   return (
     <section style={{ padding: "40px 50px" }}>
-      <h2>Analytics</h2>
+      <h2>{t("recruiter.analytics.title")}</h2>
 
-      <h3 style={{ marginTop: 30, marginBottom: 10 }}>Applications per Listing</h3>
+      <h3 style={{ marginTop: 30, marginBottom: 10 }}>{t("recruiter.analytics.applicationsPerListingTitle")}</h3>
       {data.applicationsPerListing.length === 0 ? (
-        <EmptyState icon="📊" title="No listings yet" description="Post an internship to see analytics here." />
+        <EmptyState
+          icon="📊"
+          title={t("recruiter.analytics.noListingsTitle")}
+          description={t("recruiter.analytics.noListingsDescription")}
+        />
       ) : (
         <ResponsiveContainer width="100%" height={280}>
           <BarChart data={data.applicationsPerListing}>
@@ -41,7 +46,7 @@ export default function Analytics() {
         </ResponsiveContainer>
       )}
 
-      <h3 style={{ marginTop: 30, marginBottom: 10 }}>Application Funnel</h3>
+      <h3 style={{ marginTop: 30, marginBottom: 10 }}>{t("recruiter.analytics.funnelTitle")}</h3>
       <ResponsiveContainer width="100%" height={280}>
         <BarChart data={funnelData}>
           <XAxis dataKey="label" />
@@ -55,9 +60,9 @@ export default function Analytics() {
         </BarChart>
       </ResponsiveContainer>
 
-      <h3 style={{ marginTop: 30, marginBottom: 10 }}>Popular Skills Among Applicants</h3>
+      <h3 style={{ marginTop: 30, marginBottom: 10 }}>{t("recruiter.analytics.popularSkillsTitle")}</h3>
       {data.popularSkills.length === 0 ? (
-        <EmptyState icon="🧩" title="No applicant skill data yet" />
+        <EmptyState icon="🧩" title={t("recruiter.analytics.noSkillDataTitle")} />
       ) : (
         <ResponsiveContainer width="100%" height={280}>
           <BarChart data={data.popularSkills} layout="vertical" margin={{ left: 40 }}>

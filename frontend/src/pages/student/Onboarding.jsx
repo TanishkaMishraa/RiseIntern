@@ -4,6 +4,7 @@ import SkillTagInput from "../../components/SkillTagInput";
 import { updateProfile } from "../../api/users";
 import { useAuth } from "../../context/AuthContext";
 import { useToast } from "../../hooks/useToast";
+import { useI18n } from "../../context/I18nContext";
 
 const STEPS = ["welcome", "skills", "match"];
 
@@ -11,6 +12,7 @@ export default function Onboarding() {
   const navigate = useNavigate();
   const { token, updateUser } = useAuth();
   const toast = useToast();
+  const { t } = useI18n();
   const [step, setStep] = useState(0);
   const [skills, setSkills] = useState([]);
   const [isSaving, setIsSaving] = useState(false);
@@ -24,7 +26,7 @@ export default function Onboarding() {
         const updated = await updateProfile({ skills }, token);
         updateUser(updated);
       } catch (err) {
-        toast.error("Could not save your skills — you can add them later from your profile");
+        toast.error(t("student.onboarding.saveSkillsErrorToast"));
       } finally {
         setIsSaving(false);
       }
@@ -37,45 +39,45 @@ export default function Onboarding() {
       <div className="popup-content" style={{ textAlign: "left" }}>
         {current === "welcome" && (
           <>
-            <h2>Welcome to RiseIntern 👋</h2>
-            <p>Let's set up your profile so we can find the best internship matches for you.</p>
+            <h2>{t("student.onboarding.welcomeTitle")}</h2>
+            <p>{t("student.onboarding.welcomeDescription")}</p>
           </>
         )}
 
         {current === "skills" && (
           <>
-            <h2>What are your skills?</h2>
+            <h2>{t("student.onboarding.skillsTitle")}</h2>
             <SkillTagInput value={skills} onChange={setSkills} />
           </>
         )}
 
         {current === "match" && (
           <>
-            <h2>You're all set! 🎉</h2>
-            <p>Head over to your recommendations to see your first matches.</p>
+            <h2>{t("student.onboarding.doneTitle")}</h2>
+            <p>{t("student.onboarding.doneDescription")}</p>
           </>
         )}
 
         <div style={{ marginTop: 20, display: "flex", justifyContent: "space-between" }}>
           {step > 0 && (
             <button onClick={() => setStep((s) => s - 1)} disabled={isSaving}>
-              Back
+              {t("student.onboarding.backButton")}
             </button>
           )}
           {step < STEPS.length - 1 ? (
             <button className="btn" onClick={handleNext} disabled={isSaving}>
-              {isSaving ? "Saving…" : "Next"}
+              {isSaving ? t("common.saving") : t("student.onboarding.nextButton")}
             </button>
           ) : (
             <button className="btn" onClick={() => navigate("/recommendations")}>
-              See my matches
+              {t("student.onboarding.seeMatchesButton")}
             </button>
           )}
         </div>
 
         {step === 0 && (
           <p style={{ marginTop: 12, fontSize: "0.85rem", textAlign: "center" }}>
-            <Link to="/recommendations">Skip for now</Link>
+            <Link to="/recommendations">{t("student.onboarding.skipLink")}</Link>
           </p>
         )}
       </div>

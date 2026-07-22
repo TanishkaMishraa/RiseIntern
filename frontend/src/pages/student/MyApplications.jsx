@@ -3,10 +3,12 @@ import { useAuth } from "../../context/AuthContext";
 import { listMyApplications } from "../../api/applications";
 import EmptyState from "../../components/EmptyState";
 import Skeleton from "../../components/Skeleton";
-import { APPLICATION_STATUSES, APPLICATION_STATUS_LABELS } from "../../utils/constants";
+import { APPLICATION_STATUSES } from "../../utils/constants";
+import { useI18n } from "../../context/I18nContext";
 
 export default function MyApplications() {
   const { token } = useAuth();
+  const { t } = useI18n();
   const [applications, setApplications] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -19,12 +21,18 @@ export default function MyApplications() {
   if (isLoading) return <Skeleton height="300px" />;
 
   if (applications.length === 0) {
-    return <EmptyState icon="📄" title="No applications yet" description="Apply to internships to track their status here." />;
+    return (
+      <EmptyState
+        icon="📄"
+        title={t("student.myApplications.emptyTitle")}
+        description={t("student.myApplications.emptyDescription")}
+      />
+    );
   }
 
   return (
     <section style={{ padding: "40px 50px" }}>
-      <h2>My Applications</h2>
+      <h2>{t("student.myApplications.title")}</h2>
       <div style={{ display: "flex", gap: 16, marginTop: 20, overflowX: "auto" }}>
         {APPLICATION_STATUSES.map((status) => {
           const inColumn = applications.filter((app) => app.status === status);
@@ -34,7 +42,7 @@ export default function MyApplications() {
               style={{ background: "#f4f7fb", borderRadius: 12, padding: 12, minWidth: 220, flex: 1 }}
             >
               <h4 style={{ marginBottom: 10 }}>
-                {APPLICATION_STATUS_LABELS[status]} ({inColumn.length})
+                {t(`status.${status}`)} ({inColumn.length})
               </h4>
               {inColumn.map((app) => (
                 <div

@@ -6,10 +6,12 @@ import { uploadResume } from "../../api/resumes";
 import { updateProfile } from "../../api/users";
 import { useAuth } from "../../context/AuthContext";
 import { useToast } from "../../hooks/useToast";
+import { useI18n } from "../../context/I18nContext";
 
 export default function ProfileEdit() {
   const { user, token, updateUser } = useAuth();
   const toast = useToast();
+  const { t } = useI18n();
   const [form, setForm] = useState({
     name: user?.name ?? "",
     education: user?.education ?? "",
@@ -36,13 +38,15 @@ export default function ProfileEdit() {
       if (newSkills.length > 0) {
         update("skills", [...form.skills, ...newSkills]);
         toast.success(
-          `Found ${newSkills.length} skill${newSkills.length === 1 ? "" : "s"} on your resume — review below and save.`
+          newSkills.length === 1
+            ? t("student.profileEdit.resumeSkillsFoundOne")
+            : t("student.profileEdit.resumeSkillsFoundMany", { count: newSkills.length })
         );
       } else {
-        toast.info("Resume parsed — no new skills found beyond what's already on your profile.");
+        toast.info(t("student.profileEdit.resumeNoNewSkillsToast"));
       }
     } catch (err) {
-      toast.error(err.message || "Resume upload failed");
+      toast.error(err.message || t("student.profileEdit.resumeUploadErrorToast"));
     } finally {
       setIsParsingResume(false);
     }
@@ -54,9 +58,9 @@ export default function ProfileEdit() {
     try {
       const updated = await updateProfile(form, token);
       updateUser(updated);
-      toast.success("Profile saved");
+      toast.success(t("student.profileEdit.savedToast"));
     } catch (err) {
-      toast.error("Could not save profile");
+      toast.error(t("student.profileEdit.saveErrorToast"));
     } finally {
       setIsSaving(false);
     }
@@ -64,35 +68,35 @@ export default function ProfileEdit() {
 
   return (
     <section style={{ padding: "40px 50px", maxWidth: 600 }}>
-      <h2>Edit Profile</h2>
+      <h2>{t("student.profileEdit.title")}</h2>
       <ProfileCompleteness user={{ ...user, ...form }} />
 
       <form onSubmit={handleSubmit} style={{ display: "grid", gap: 16, marginTop: 20 }}>
         <label>
-          Name
+          {t("student.profileEdit.nameLabel")}
           <input value={form.name} onChange={(e) => update("name", e.target.value)} required />
         </label>
 
         <label>
-          Education
+          {t("student.profileEdit.educationLabel")}
           <input
-            placeholder="e.g. B.Tech Computer Science, Class of 2026"
+            placeholder={t("student.profileEdit.educationPlaceholder")}
             value={form.education}
             onChange={(e) => update("education", e.target.value)}
           />
         </label>
 
         <label>
-          Location
+          {t("student.profileEdit.locationLabel")}
           <input
-            placeholder="e.g. Bengaluru"
+            placeholder={t("student.profileEdit.locationPlaceholder")}
             value={form.location}
             onChange={(e) => update("location", e.target.value)}
           />
         </label>
 
         <label>
-          Skills
+          {t("student.profileEdit.skillsLabel")}
           {isParsingResume ? (
             <Skeleton height="44px" style={{ borderRadius: 10 }} />
           ) : (
@@ -101,17 +105,18 @@ export default function ProfileEdit() {
         </label>
 
         <button className="btn" type="submit" disabled={isSaving}>
-          {isSaving ? "Saving…" : "Save Profile"}
+          {isSaving ? t("common.saving") : t("student.profileEdit.saveButton")}
         </button>
       </form>
 
       <div style={{ marginTop: 24 }}>
-        <label>Resume (PDF, under 5MB)</label>
+        <label>{t("student.profileEdit.resumeLabel")}</label>
         <input type="file" accept=".pdf" onChange={handleResumeChange} disabled={isParsingResume} />
-        {isParsingResume && <p style={{ fontSize: "0.85rem", marginTop: 6 }}>Parsing your resume…</p>}
+        {isParsingResume && (
+          <p style={{ fontSize: "0.85rem", marginTop: 6 }}>{t("student.profileEdit.parsingResumeText")}</p>
+        )}
         <p style={{ fontSize: "0.8rem", opacity: 0.7, marginTop: 6 }}>
-          We'll scan it for skills and add them to the list above — nothing is saved to your profile
-          until you click Save Profile.
+          {t("student.profileEdit.resumeHelpText")}
         </p>
       </div>
     </section>

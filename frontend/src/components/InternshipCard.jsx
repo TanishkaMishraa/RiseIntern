@@ -1,7 +1,9 @@
 import BookmarkButton from "./BookmarkButton";
 import DeadlineCountdown from "./DeadlineCountdown";
+import { useI18n } from "../context/I18nContext";
 
 export default function InternshipCard({ internship, onViewDetails }) {
+  const { t } = useI18n();
   const { id, title, domain, description, deadline, bookmarked, location, stipend } = internship;
 
   return (
@@ -14,12 +16,14 @@ export default function InternshipCard({ internship, onViewDetails }) {
       <p>{description}</p>
       <div className="i-card__details">
         {location && <span>{location}</span>}
-        {Number(stipend) > 0 && <span>Rs. {Number(stipend).toLocaleString("en-IN")}</span>}
+        {Number(stipend) > 0 && (
+          <span>{t("internshipCard.stipend", { amount: Number(stipend).toLocaleString("en-IN") })}</span>
+        )}
       </div>
       <DeadlineCountdown deadline={deadline} />
       {onViewDetails && (
         <button className="i-btn" onClick={() => onViewDetails(internship)}>
-          View Details
+          {t("internshipCard.viewDetails")}
         </button>
       )}
     </div>

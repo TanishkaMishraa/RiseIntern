@@ -478,3 +478,89 @@ footer p { text-align: center; margin-top: 20px; font-size: 0.9rem; color: #888;
     grid-template-columns: minmax(220px, 1fr) 1.5fr minmax(180px, 0.8fr) minmax(180px, 0.8fr);
   }
 }
+
+/* Accessibility: visible focus rings for keyboard navigation.
+   :focus-visible only fires for keyboard/assistive-tech focus, not mouse
+   clicks, so this restores the rings suppressed above (#searchInput,
+   .skill-input__box input, .filter-bar input/select) without adding a
+   ring on every mouse click. Same specificity as those rules + later in
+   the cascade wins on the `outline` property. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid #0073e6;
+  outline-offset: 2px;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* Mobile bottom nav: only shown below the desktop breakpoint. */
+.mobile-nav {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .mobile-nav {
+    display: flex;
+  }
+
+  /* Clear space for the fixed bottom nav so it doesn't cover content. */
+  body {
+    padding-bottom: 64px;
+  }
+
+  header {
+    flex-wrap: wrap;
+    padding: 12px 16px;
+    gap: 10px;
+  }
+
+  .logo-container img {
+    width: 44px;
+    height: 40px;
+  }
+
+  .logo-container h1 {
+    font-size: 1.3rem;
+  }
+
+  nav {
+    flex-wrap: wrap;
+    gap: 4px;
+    justify-content: flex-end;
+  }
+
+  nav a {
+    margin: 0 6px;
+    font-size: 0.9rem;
+  }
+
+  .hero h2 {
+    font-size: 2rem;
+  }
+
+  .hero p {
+    font-size: 1rem;
+  }
+
+  .about,
+  .features,
+  .internships,
+  .bot-section {
+    padding: 40px 20px;
+  }
+
+  /* Most dashboard/list pages use an inline `padding: 40px 50px` on their
+     top-level <section> (see admin/recruiter/student pages) — inline
+     styles otherwise beat any selector here, so !important is needed to
+     make that layout usable on a phone-width viewport. */
+  section {
+    padding: 24px 16px !important;
+  }
+}

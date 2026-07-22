@@ -4,9 +4,11 @@ import { bookmarkApi } from "../../api/bookmarks";
 import InternshipCard from "../../components/InternshipCard";
 import EmptyState from "../../components/EmptyState";
 import Skeleton from "../../components/Skeleton";
+import { useI18n } from "../../context/I18nContext";
 
 export default function SavedInternships() {
   const { token } = useAuth();
+  const { t } = useI18n();
   const [saved, setSaved] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -27,7 +29,13 @@ export default function SavedInternships() {
   }
 
   if (saved.length === 0) {
-    return <EmptyState icon="★" title="No saved internships yet" description="Bookmark internships to find them here." />;
+    return (
+      <EmptyState
+        icon="★"
+        title={t("student.savedInternships.emptyTitle")}
+        description={t("student.savedInternships.emptyDescription")}
+      />
+    );
   }
 
   return (

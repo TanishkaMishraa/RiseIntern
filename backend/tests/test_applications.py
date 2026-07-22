@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta, timezone
 
 from app.models.internship import Internship
+from app.tasks.emails import _queue
 from tests.conftest import auth_headers, make_user
 
 
@@ -53,3 +54,9 @@ def test_apply_status_change_and_notification_flow(client, db_session):
     notifications = client.get("/api/notifications", headers=student_headers)
     assert len(notifications.json()) == 1
     assert "shortlisted" in notifications.json()[0]["message"]
+
+    # Status-change emails go through the async queue, not a synchronous
+    # SMTP call in the request path.
+    assert len(_queue) == 1
+    assert _queue[0].to == "aarav@example.com"
+    assert "shortlisted" in _queue[0].body

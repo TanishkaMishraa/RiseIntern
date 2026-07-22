@@ -11,7 +11,14 @@ export function I18nProvider({ children }) {
 
   const value = useMemo(() => {
     const strings = LOCALES[language] ?? LOCALES.en;
-    const t = (key) => strings[key] ?? key;
+    const t = (key, vars) => {
+      const raw = strings[key] ?? key;
+      if (!vars) return raw;
+      return Object.entries(vars).reduce(
+        (result, [name, val]) => result.replaceAll(`{${name}}`, val),
+        raw
+      );
+    };
     return { language, setLanguage, t };
   }, [language]);
 

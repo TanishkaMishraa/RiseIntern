@@ -7,11 +7,13 @@ import KanbanBoard from "../../components/kanban/KanbanBoard";
 import EmptyState from "../../components/EmptyState";
 import Skeleton from "../../components/Skeleton";
 import { useToast } from "../../hooks/useToast";
+import { useI18n } from "../../context/I18nContext";
 
 export default function Applicants() {
   const { id } = useParams();
   const { token } = useAuth();
   const toast = useToast();
+  const { t } = useI18n();
   const [internship, setInternship] = useState(null);
   const [applicants, setApplicants] = useState(null);
 
@@ -29,7 +31,7 @@ export default function Applicants() {
       await applicationApi.updateStatus(applicant.id, newStatus, token);
     } catch (err) {
       setApplicants(previous);
-      toast.error("Could not update applicant status");
+      toast.error(t("recruiter.applicants.updateErrorToast"));
     }
   }
 
@@ -37,10 +39,14 @@ export default function Applicants() {
 
   return (
     <section style={{ padding: "40px 50px" }}>
-      <h2>Applicants{internship ? ` — ${internship.title}` : ""}</h2>
+      <h2>{t("recruiter.applicants.title")}{internship ? ` — ${internship.title}` : ""}</h2>
 
       {applicants.length === 0 ? (
-        <EmptyState icon="🧑‍🤝‍🧑" title="No applicants yet" description="Applicants will appear here once students apply." />
+        <EmptyState
+          icon="🧑‍🤝‍🧑"
+          title={t("recruiter.applicants.emptyTitle")}
+          description={t("recruiter.applicants.emptyDescription")}
+        />
       ) : (
         <div style={{ marginTop: 20 }}>
           <KanbanBoard applicants={applicants} onMove={handleMove} />

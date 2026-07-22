@@ -4,9 +4,11 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recha
 import { useAuth } from "../../context/AuthContext";
 import { getAdminAnalytics } from "../../api/analytics";
 import Skeleton from "../../components/Skeleton";
+import { useI18n } from "../../context/I18nContext";
 
 export default function AdminDashboard() {
   const { token } = useAuth();
+  const { t } = useI18n();
   const [stats, setStats] = useState(null);
 
   useEffect(() => {
@@ -17,18 +19,18 @@ export default function AdminDashboard() {
 
   return (
     <section style={{ padding: "40px 50px" }}>
-      <h2>Admin Dashboard</h2>
+      <h2>{t("admin.dashboard.title")}</h2>
       <div style={{ display: "flex", gap: 20, marginBottom: 30, flexWrap: "wrap" }}>
-        <div className="card"><h3>{stats.totalUsers}</h3><p>Users</p></div>
-        <div className="card"><h3>{stats.totalListings}</h3><p>Listings</p></div>
-        <div className="card"><h3>{stats.totalApplications}</h3><p>Applications</p></div>
+        <div className="card"><h3>{stats.totalUsers}</h3><p>{t("admin.dashboard.usersLabel")}</p></div>
+        <div className="card"><h3>{stats.totalListings}</h3><p>{t("admin.dashboard.listingsLabel")}</p></div>
+        <div className="card"><h3>{stats.totalApplications}</h3><p>{t("admin.dashboard.applicationsLabel")}</p></div>
       </div>
       <div style={{ display: "flex", gap: 20, marginBottom: 30, flexWrap: "wrap" }}>
         <Link to="/admin/users" className="card">
-          <h3>👥 Manage Users</h3>
+          <h3>{t("admin.dashboard.manageUsersCard")}</h3>
         </Link>
         <Link to="/admin/listings" className="card">
-          <h3>📋 Manage Listings</h3>
+          <h3>{t("admin.dashboard.manageListingsCard")}</h3>
         </Link>
       </div>
       <ResponsiveContainer width="100%" height={300}>

@@ -4,14 +4,16 @@ import InternshipCard from "../components/InternshipCard";
 import EmptyState from "../components/EmptyState";
 import { SkeletonCard } from "../components/Skeleton";
 import { useInternships } from "../hooks/useInternships";
+import { useI18n } from "../context/I18nContext";
 
 export default function BrowseInternships() {
+  const { t } = useI18n();
   const [filters, setFilters] = useState({});
   const { internships, isLoading, error } = useInternships(filters);
 
   return (
     <section className="internships" id="internships">
-      <h2>Explore Internship Opportunities</h2>
+      <h2>{t("browse.title")}</h2>
       <FilterBar onChange={setFilters} />
 
       {isLoading && (
@@ -23,14 +25,14 @@ export default function BrowseInternships() {
       )}
 
       {!isLoading && error && (
-        <EmptyState icon="Alert" title="Couldn't load internships" description={error.message} />
+        <EmptyState icon="Alert" title={t("browse.loadErrorTitle")} description={error.message} />
       )}
 
       {!isLoading && !error && internships.length === 0 && (
         <EmptyState
           icon="Search"
-          title="No internships match your filters"
-          description="Try a different domain, location, or stipend range."
+          title={t("browse.noMatchTitle")}
+          description={t("browse.noMatchDescription")}
         />
       )}
 

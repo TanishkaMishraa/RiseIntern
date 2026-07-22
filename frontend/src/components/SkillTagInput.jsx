@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { SKILLS } from "../utils/constants";
+import { useI18n } from "../context/I18nContext";
 
 function normalizeSkills(value) {
   if (Array.isArray(value)) return value.filter(Boolean);
@@ -7,9 +8,11 @@ function normalizeSkills(value) {
   return value.split(",").map((skill) => skill.trim()).filter(Boolean);
 }
 
-export default function SkillTagInput({ value = [], onChange, placeholder = "Add a skill" }) {
+export default function SkillTagInput({ value = [], onChange, placeholder }) {
+  const { t } = useI18n();
   const skills = useMemo(() => normalizeSkills(value), [value]);
   const [input, setInput] = useState("");
+  const effectivePlaceholder = placeholder ?? t("skillInput.addSkillPlaceholder");
 
   useEffect(() => {
     if (typeof value === "string") onChange?.(skills.join(", "));
@@ -53,7 +56,7 @@ export default function SkillTagInput({ value = [], onChange, placeholder = "Add
         {skills.map((skill) => (
           <span className="skill-chip" key={skill}>
             {skill}
-            <button type="button" aria-label={`Remove ${skill}`} onClick={() => removeSkill(skill)}>
+            <button type="button" aria-label={t("skillInput.removeAriaLabel", { skill })} onClick={() => removeSkill(skill)}>
               x
             </button>
           </span>
@@ -62,7 +65,7 @@ export default function SkillTagInput({ value = [], onChange, placeholder = "Add
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder={skills.length ? "" : placeholder}
+          placeholder={skills.length ? "" : effectivePlaceholder}
         />
       </div>
       {suggestions.length > 0 && (

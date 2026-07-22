@@ -6,9 +6,11 @@ import MatchBreakdown from "../components/MatchBreakdown";
 import EmptyState from "../components/EmptyState";
 import ProfileCompleteness from "../components/ProfileCompleteness";
 import { SkeletonCard } from "../components/Skeleton";
+import { useI18n } from "../context/I18nContext";
 
 export default function Recommendations() {
   const { token, user } = useAuth();
+  const { t } = useI18n();
   const [recommendations, setRecommendations] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -24,7 +26,7 @@ export default function Recommendations() {
   if (isLoading) {
     return (
       <section className="internships">
-        <h2>Your Recommendations</h2>
+        <h2>{t("recommendations.title")}</h2>
         <div className="internship-cards">
           {Array.from({ length: 3 }).map((_, i) => (
             <SkeletonCard key={i} />
@@ -35,7 +37,7 @@ export default function Recommendations() {
   }
 
   if (error) {
-    return <EmptyState icon="Alert" title="Couldn't load recommendations" description={error.message} />;
+    return <EmptyState icon="Alert" title={t("recommendations.loadErrorTitle")} description={error.message} />;
   }
 
   if (recommendations.length === 0) {
@@ -46,9 +48,9 @@ export default function Recommendations() {
         </div>
         <EmptyState
           icon="Target"
-          title="No recommendations yet"
-          description="Add skills to your profile to get stronger matches."
-          action={{ label: "Update profile", to: "/profile" }}
+          title={t("recommendations.emptyTitle")}
+          description={t("recommendations.emptyDescription")}
+          action={{ label: t("recommendations.updateProfileAction"), to: "/profile" }}
         />
       </section>
     );
@@ -56,7 +58,7 @@ export default function Recommendations() {
 
   return (
     <section className="internships">
-      <h2>Your Recommendations</h2>
+      <h2>{t("recommendations.title")}</h2>
       <div style={{ maxWidth: 560, margin: "0 auto 24px" }}>
         <ProfileCompleteness user={user} />
       </div>

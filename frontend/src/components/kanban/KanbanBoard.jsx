@@ -24,6 +24,7 @@ export default function KanbanBoard({ applicants, onMove }) {
             draggedApplicant.current = applicant;
           }}
           onDrop={handleDrop}
+          onMove={onMove}
         />
       ))}
     </div>

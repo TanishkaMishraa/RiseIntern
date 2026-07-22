@@ -2,11 +2,13 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../hooks/useToast";
+import { useI18n } from "../context/I18nContext";
 
 export default function Login() {
   const { login } = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
+  const { t } = useI18n();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -20,30 +22,30 @@ export default function Login() {
         navigate(`/${user.role}`);
       }
     } catch (err) {
-      toast.error("Invalid email or password");
+      toast.error(t("auth.invalidCredentialsToast"));
     }
   }
 
   return (
     <section className="hero">
       <div className="popup-content">
-        <h2>Login</h2>
+        <h2>{t("auth.loginTitle")}</h2>
         <form onSubmit={handleSubmit}>
           <input
             type="email"
-            placeholder="Email"
+            placeholder={t("auth.emailPlaceholder")}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
           <input
             type="password"
-            placeholder="Password"
+            placeholder={t("auth.passwordPlaceholder")}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-          <button className="btn" type="submit">Login</button>
+          <button className="btn" type="submit">{t("auth.loginButton")}</button>
         </form>
       </div>
     </section>

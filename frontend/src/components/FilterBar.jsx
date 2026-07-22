@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { DOMAINS } from "../utils/constants";
 import { useDebounce } from "../hooks/useDebounce";
+import { useI18n } from "../context/I18nContext";
 
 const INITIAL_FILTERS = { q: "", domain: "", minStipend: 0, location: "" };
 
 export default function FilterBar({ onChange }) {
+  const { t } = useI18n();
   const [filters, setFilters] = useState(INITIAL_FILTERS);
   const debouncedFilters = useDebounce(filters, 300);
 
@@ -23,12 +25,12 @@ export default function FilterBar({ onChange }) {
     <div className="filter-bar">
       <input
         id="searchInput"
-        placeholder="Search by category or skill"
+        placeholder={t("filter.searchPlaceholder")}
         value={filters.q}
         onChange={(e) => update("q", e.target.value)}
       />
 
-      <div className="filter-bar__domains" aria-label="Internship domains">
+      <div className="filter-bar__domains" aria-label={t("filter.domainsAriaLabel")}>
         {DOMAINS.map((domain) => (
           <button
             type="button"
@@ -42,7 +44,7 @@ export default function FilterBar({ onChange }) {
       </div>
 
       <label className="filter-bar__range">
-        Min stipend: Rs. {filters.minStipend.toLocaleString("en-IN")}
+        {t("filter.minStipendLabel", { amount: filters.minStipend.toLocaleString("en-IN") })}
         <input
           type="range"
           min="0"
@@ -54,7 +56,7 @@ export default function FilterBar({ onChange }) {
       </label>
 
       <input
-        placeholder="Location"
+        placeholder={t("filter.locationPlaceholder")}
         value={filters.location}
         onChange={(e) => update("location", e.target.value)}
       />

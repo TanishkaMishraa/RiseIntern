@@ -10,6 +10,7 @@ bcrypt==4.0.1
 python-multipart==0.0.9
 alembic==1.13.2
 apscheduler==3.10.4
+sentry-sdk[fastapi]==2.14.0
 pypdf==4.3.1
 email-validator==2.2.0
 python-dotenv==1.0.1

@@ -1,13 +1,24 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useNotifications } from "../hooks/useNotifications";
-import { formatRelativeTime } from "../utils/date";
+import { getRelativeTimeInfo } from "../utils/date";
+import { useI18n } from "../context/I18nContext";
 import EmptyState from "./EmptyState";
 
 export default function NotificationBell() {
   const { notifications, unreadCount, markRead, markAllRead } = useNotifications();
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+  const { t } = useI18n();
+
+  function formatRelativeTime(isoDate) {
+    const info = getRelativeTimeInfo(isoDate);
+    if (info.type === "today") return t("time.today");
+    if (info.type === "future") {
+      return info.days === 1 ? t("time.inOneDay") : t("time.inDays", { days: info.days });
+    }
+    return info.days === 1 ? t("time.oneDayAgo") : t("time.daysAgo", { days: info.days });
+  }
 
   function handleClick(notification) {
     if (!notification.read) markRead(notification.id);
@@ -17,7 +28,7 @@ export default function NotificationBell() {
 
   return (
     <div style={{ position: "relative" }}>
-      <button onClick={() => setOpen((prev) => !prev)} aria-label="Notifications">
+      <button onClick={() => setOpen((prev) => !prev)} aria-label={t("notifications.ariaLabel")}>
         🔔{unreadCount > 0 && <span className="badge">{unreadCount}</span>}
       </button>
 
@@ -39,22 +50,30 @@ export default function NotificationBell() {
           }}
         >
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-            <strong>Notifications</strong>
+            <strong>{t("notifications.title")}</strong>
             {unreadCount > 0 && (
               <button onClick={markAllRead} style={{ fontSize: "0.8rem" }}>
-                Mark all read
+                {t("notifications.markAllRead")}
               </button>
             )}
           </div>
 
           {notifications.length === 0 ? (
-            <EmptyState icon="🔔" title="No notifications yet" />
+            <EmptyState icon="🔔" title={t("notifications.emptyTitle")} />
           ) : (
             <ul style={{ display: "grid", gap: 4 }}>
               {notifications.map((n) => (
                 <li
                   key={n.id}
+                  role="button"
+                  tabIndex={0}
                   onClick={() => handleClick(n)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      handleClick(n);
+                    }
+                  }}
                   style={{
                     listStyle: "none",
                     padding: "8px 10px",

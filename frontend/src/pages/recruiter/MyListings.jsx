@@ -6,10 +6,12 @@ import { useToast } from "../../hooks/useToast";
 import EmptyState from "../../components/EmptyState";
 import Skeleton from "../../components/Skeleton";
 import DeadlineCountdown from "../../components/DeadlineCountdown";
+import { useI18n } from "../../context/I18nContext";
 
 export default function MyListings() {
   const { token } = useAuth();
   const toast = useToast();
+  const { t } = useI18n();
   const [listings, setListings] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -26,28 +28,34 @@ export default function MyListings() {
   async function handleToggleClosed(listing) {
     try {
       await recruiterInternshipApi.update(listing.id, { is_closed: !listing.is_closed }, token);
-      toast.success(listing.is_closed ? "Listing reopened" : "Listing closed");
+      toast.success(listing.is_closed ? t("recruiter.myListings.reopenedToast") : t("recruiter.myListings.closedToast"));
       reload();
     } catch (err) {
-      toast.error("Could not update listing");
+      toast.error(t("recruiter.myListings.updateErrorToast"));
     }
   }
 
   async function handleDelete(id) {
-    if (!window.confirm("Delete this listing? This cannot be undone.")) return;
+    if (!window.confirm(t("recruiter.myListings.confirmDelete"))) return;
     try {
       await recruiterInternshipApi.remove(id, token);
-      toast.success("Listing removed");
+      toast.success(t("recruiter.myListings.removedToast"));
       reload();
     } catch (err) {
-      toast.error("Could not remove listing");
+      toast.error(t("recruiter.myListings.removeErrorToast"));
     }
   }
 
   if (isLoading) return <Skeleton height="300px" />;
 
   if (listings.length === 0) {
-    return <EmptyState icon="📋" title="No listings yet" description="Post your first internship to see it here." />;
+    return (
+      <EmptyState
+        icon="📋"
+        title={t("recruiter.myListings.emptyTitle")}
+        description={t("recruiter.myListings.emptyDescription")}
+      />
+    );
   }
 
   return (
@@ -55,19 +63,19 @@ export default function MyListings() {
       {listings.map((listing) => (
         <div key={listing.id} className="i-card">
           <h3>
-            {listing.title} {listing.is_closed && <span className="badge">Closed</span>}
+            {listing.title} {listing.is_closed && <span className="badge">{t("recruiter.myListings.closedBadge")}</span>}
           </h3>
           <p>{listing.description}</p>
           <DeadlineCountdown deadline={listing.deadline} />
           <div style={{ display: "flex", gap: 8, marginTop: 12, flexWrap: "wrap" }}>
             <Link className="i-btn" to={`/recruiter/listings/${listing.id}/applicants`}>
-              Applicants
+              {t("recruiter.myListings.applicantsLink")}
             </Link>
             <button className="i-btn" onClick={() => handleToggleClosed(listing)}>
-              {listing.is_closed ? "Reopen" : "Close"}
+              {listing.is_closed ? t("recruiter.myListings.reopenButton") : t("recruiter.myListings.closeButton")}
             </button>
             <button className="i-btn" onClick={() => handleDelete(listing.id)}>
-              Delete
+              {t("recruiter.myListings.deleteButton")}
             </button>
           </div>
         </div>

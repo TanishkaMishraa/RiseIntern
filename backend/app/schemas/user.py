@@ -19,6 +19,7 @@ class UserRead(UserBase):
     education: str | None = None
     location: str | None = None
     is_active: bool = True
+    is_verified: bool = False
 
 
 class UserUpdate(BaseModel):
