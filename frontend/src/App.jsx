@@ -15,6 +15,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import BrowseInternships from "./pages/BrowseInternships";
 import Recommendations from "./pages/Recommendations";
+import Bot from "./pages/Bot";
 
 import Onboarding from "./pages/student/Onboarding";
 import ProfileEdit from "./pages/student/ProfileEdit";
@@ -44,6 +45,7 @@ export default function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/internships" element={<BrowseInternships />} />
+              <Route path="/bot" element={<Bot />} />
 
               <Route element={<ProtectedRoute />}>
                 <Route path="/recommendations" element={<Recommendations />} />

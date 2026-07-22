@@ -2,9 +2,9 @@ import BookmarkButton from "./BookmarkButton";
 import DeadlineCountdown from "./DeadlineCountdown";
 import { useI18n } from "../context/I18nContext";
 
-export default function InternshipCard({ internship, onViewDetails }) {
+export default function InternshipCard({ internship, onApply }) {
   const { t } = useI18n();
-  const { id, title, domain, description, deadline, bookmarked, location, stipend } = internship;
+  const { id, title, domain, description, deadline, bookmarked, applied, location, stipend } = internship;
 
   return (
     <div className="i-card">
@@ -21,9 +21,14 @@ export default function InternshipCard({ internship, onViewDetails }) {
         )}
       </div>
       <DeadlineCountdown deadline={deadline} />
-      {onViewDetails && (
-        <button className="i-btn" onClick={() => onViewDetails(internship)}>
-          {t("internshipCard.viewDetails")}
+      {onApply && (
+        <button
+          className="i-btn"
+          onClick={() => onApply(internship)}
+          disabled={applied}
+          aria-disabled={applied}
+        >
+          {applied ? t("internshipCard.appliedButton") : t("internshipCard.applyButton")}
         </button>
       )}
     </div>

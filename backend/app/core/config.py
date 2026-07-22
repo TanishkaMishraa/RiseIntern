@@ -20,6 +20,9 @@ class Settings(BaseSettings):
 
     sentry_dsn: str = ""
 
+    anthropic_api_key: str = ""
+    chat_model: str = "claude-opus-4-8"
+
     storage_dir: str = "./storage/resumes"
     max_resume_size_mb: int = 5
 

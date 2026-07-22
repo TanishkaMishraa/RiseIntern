@@ -37,7 +37,7 @@ export default function Recommendations() {
   }
 
   if (error) {
-    return <EmptyState icon="Alert" title={t("recommendations.loadErrorTitle")} description={error.message} />;
+    return <EmptyState icon="⚠️" title={t("recommendations.loadErrorTitle")} description={error.message} />;
   }
 
   if (recommendations.length === 0) {
@@ -47,7 +47,7 @@ export default function Recommendations() {
           <ProfileCompleteness user={user} />
         </div>
         <EmptyState
-          icon="Target"
+          icon="🎯"
           title={t("recommendations.emptyTitle")}
           description={t("recommendations.emptyDescription")}
           action={{ label: t("recommendations.updateProfileAction"), to: "/profile" }}

@@ -43,7 +43,7 @@ export default function ApplicantCard({ applicant, onDragStart, onMove }) {
       <label
         style={{ display: "block", marginTop: 8, fontSize: "0.75rem" }}
       >
-        <span style={{ position: "absolute", width: 1, height: 1, overflow: "hidden", clip: "rect(0,0,0,0)" }}>
+        <span className="sr-only">
           {t("kanban.changeStatusLabel", { name: applicant.student.name })}
         </span>
         <select

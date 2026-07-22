@@ -12,8 +12,16 @@ async function request(path, { method = "GET", body, headers, token } = {}) {
   });
 
   if (!res.ok) {
-    const message = await res.text().catch(() => res.statusText);
-    throw new Error(message || `Request failed with status ${res.status}`);
+    let message = res.statusText;
+    try {
+      const data = await res.json();
+      message = data.detail ?? message;
+    } catch {
+      // Body wasn't JSON — fall back to statusText.
+    }
+    const error = new Error(message || `Request failed with status ${res.status}`);
+    error.status = res.status;
+    throw error;
   }
 
   if (res.status === 204) return null;

@@ -21,8 +21,18 @@ export default function FilterBar({ onChange }) {
     setFilters((current) => ({ ...current, [field]: value }));
   }
 
+  function clearFilters() {
+    setFilters(INITIAL_FILTERS);
+  }
+
+  const hasActiveFilters =
+    filters.q !== "" || filters.domain !== "" || filters.minStipend !== 0 || filters.location !== "";
+
   return (
     <div className="filter-bar">
+      <label className="sr-only" htmlFor="searchInput">
+        {t("filter.searchPlaceholder")}
+      </label>
       <input
         id="searchInput"
         placeholder={t("filter.searchPlaceholder")}
@@ -55,11 +65,21 @@ export default function FilterBar({ onChange }) {
         />
       </label>
 
+      <label className="sr-only" htmlFor="locationInput">
+        {t("filter.locationPlaceholder")}
+      </label>
       <input
+        id="locationInput"
         placeholder={t("filter.locationPlaceholder")}
         value={filters.location}
         onChange={(e) => update("location", e.target.value)}
       />
+
+      {hasActiveFilters && (
+        <button type="button" className="filter-bar__clear" onClick={clearFilters}>
+          {t("filter.clearButton")}
+        </button>
+      )}
     </div>
   );
 }

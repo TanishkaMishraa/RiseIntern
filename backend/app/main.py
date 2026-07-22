@@ -13,6 +13,7 @@ from app.api.routes import (
     applications,
     auth,
     bookmarks,
+    chat,
     internships,
     notifications,
     recommendations,
@@ -70,6 +71,7 @@ app.include_router(bookmarks.router, prefix=api_router_prefix)
 app.include_router(notifications.router, prefix=api_router_prefix)
 app.include_router(analytics.router, prefix=api_router_prefix)
 app.include_router(resumes.router, prefix=api_router_prefix)
+app.include_router(chat.router, prefix=api_router_prefix)
 
 
 @app.get("/health")

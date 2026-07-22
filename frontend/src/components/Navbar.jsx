@@ -17,7 +17,7 @@ export default function Navbar() {
       <nav>
         <Link to="/">{t("nav.home")}</Link>
         <Link to="/internships">{t("nav.internships")}</Link>
-        <a href="/bot.html">🤖 Bot</a>
+        <Link to="/bot">🤖 {t("nav.bot")}</Link>
 
         {isAuthenticated ? (
           <>
